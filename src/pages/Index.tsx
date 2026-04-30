@@ -722,9 +722,9 @@ function OrderPanel({ order, user, refs, onClose, onSaved }: {
               <Input label="Время выезда из цеха (кол. 13)" k="departure_load_time" type="time" roleFields={senderFields} />
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-[#AAA] mb-0.5">Ответственный за сдачу (кол. 14)</p>
-                {roles.includes("sender") && editable ? (
+                {(roles.includes("sender") || roles.includes("admin")) && editable ? (
                   <div className="border border-[#E0E0E0] bg-[#F0F0EE] px-2.5 py-1.5 text-sm text-[#888]">
-                    {user.name} <span className="text-[10px] text-[#AAA]">(автоматически)</span>
+                    {toSurnameInitials(user.name)} <span className="text-[10px] text-[#AAA]">(автоматически)</span>
                   </div>
                 ) : (
                   <p className={`text-sm py-0.5 ${order.sender_sign ? "text-[#111]" : "text-[#CCC]"}`}>

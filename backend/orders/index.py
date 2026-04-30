@@ -145,6 +145,14 @@ def next_order_num(cur):
     count = cur.fetchone()[0]
     return f"ЗПВ-{str(count + 1).zfill(4)}"
 
+def to_surname_initials(full_name: str) -> str:
+    parts = [p for p in (full_name or "").strip().split() if p]
+    if not parts:
+        return ""
+    surname = parts[0]
+    initials = "".join((p[0] + ".") for p in parts[1:] if p)
+    return f"{surname} {initials}".strip()
+
 def compute_stage(o: dict) -> int:
     """Вычисляет текущий этап по заполненным полям"""
     if o.get("done"):                  return 9
@@ -435,9 +443,13 @@ def handler(event: dict, context) -> dict:
             if int_field in fields_to_update:
                 fields_to_update[int_field] = to_int(fields_to_update[int_field])
 
-        # Автозаполнение подписи
-        if "sender" in roles and "sender_sign" not in fields_to_update:
-            fields_to_update["sender_sign"] = user["name"]
+        # Автозаполнение подписи:
+        # для "ответственного за сдачу" фиксируем именно того, кто ввел время выезда из цеха,
+        # и храним в формате "Фамилия И.О."
+        if ("sender" in roles or "admin" in roles) and "departure_load_time" in fields_to_update:
+            fields_to_update["sender_sign"] = to_surname_initials(user["name"])
+        elif ("sender" in roles or "admin" in roles) and "sender_sign" not in fields_to_update:
+            fields_to_update["sender_sign"] = to_surname_initials(user["name"])
         if "receiver" in roles and "receiver_sign" not in fields_to_update:
             fields_to_update["receiver_sign"] = user["name"]
 
