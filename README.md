@@ -26,3 +26,42 @@ Frontend now uses local API routes (`/api/*`) and Vite proxies them to `http://1
 
 Default test user:
 - `admin / 1234`
+
+## Linux deployment
+
+### Prerequisites
+- Node.js 20+
+- Python 3.10+
+- PostgreSQL 14+
+- Nginx
+
+### Local run on Linux
+1. Make scripts executable:
+   - `chmod +x scripts/setup-local.sh scripts/start-local.sh`
+2. Install frontend deps:
+   - `npm install`
+3. Start all local services:
+   - `./scripts/start-local.sh`
+
+### Build for production
+- `npm install`
+- `npm run build`
+- `python3 -m pip install -r backend/requirements-local.txt`
+- `./scripts/setup-local.sh`
+
+### systemd services
+Copy unit files from `deploy/systemd` and adjust paths/users if needed:
+- `intershop-backend.service`
+- `intershop-frontend.service`
+
+Example:
+- `sudo cp deploy/systemd/intershop-*.service /etc/systemd/system/`
+- `sudo systemctl daemon-reload`
+- `sudo systemctl enable --now intershop-backend intershop-frontend`
+- `sudo systemctl status intershop-backend intershop-frontend`
+
+### Nginx reverse proxy
+Use `deploy/nginx/intershop.local.conf`:
+- `sudo cp deploy/nginx/intershop.local.conf /etc/nginx/sites-available/intershop.local.conf`
+- `sudo ln -s /etc/nginx/sites-available/intershop.local.conf /etc/nginx/sites-enabled/intershop.local.conf`
+- `sudo nginx -t && sudo systemctl reload nginx`
