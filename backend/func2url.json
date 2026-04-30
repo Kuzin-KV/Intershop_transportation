@@ -1,0 +1,5 @@
+{
+  "admin": "http://127.0.0.1:8000/api/admin",
+  "auth": "http://127.0.0.1:8000/api/auth",
+  "orders": "http://127.0.0.1:8000/api/orders"
+}
