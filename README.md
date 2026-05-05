@@ -65,3 +65,17 @@ Use `deploy/nginx/intershop.local.conf`:
 - `sudo cp deploy/nginx/intershop.local.conf /etc/nginx/sites-available/intershop.local.conf`
 - `sudo ln -s /etc/nginx/sites-available/intershop.local.conf /etc/nginx/sites-enabled/intershop.local.conf`
 - `sudo nginx -t && sudo systemctl reload nginx`
+
+### One-command update on server
+1. Make script executable once:
+   - `chmod +x scripts/update.sh`
+2. Run update:
+   - `./scripts/update.sh`
+
+What it does:
+- pulls latest code from `origin/main`,
+- installs npm + Python dependencies,
+- applies DB setup/migrations,
+- builds frontend,
+- restarts `intershop-backend` and `intershop-frontend`,
+- reloads Nginx.
